@@ -1,0 +1,208 @@
+# ch01 初始数据库
+
+## DBMS的种类
+
+- 层次数据库 如：**IMS**
+- 关系数据库 如：**MySql**
+- 面向对象数据库 如：**Oracle**
+- XML数据库  如：**Tamino**
+- 键值存储系统 如：**MongoDB**
+
+## SQL基本书写规则
+
+- 语句以分号 ；结尾
+- 不区分**关键字**大小写
+- win系统甚至不区分表名和字段名的大小写，unix类系统则严格区分
+
+## SQL基本语句
+
+注意：以下的<>等表示括号内的文字（比如表名）必须写
+
+且<>不是语法的一部分，只作规范标注作用
+
+- 创建数据库
+
+  ```cpp
+  create database <数据库名>;
+  ```
+
+- 表的创建
+
+  ```cpp
+  create table <表名>(
+  	<列名1> <数据类型> <约束>,
+      <列名2> <数据类型> <约束>,
+      .
+      .
+      .
+  );
+  ```
+
+ ## 数据类型
+
+四种最基本的数据类型
+
+- INTEGER 型
+
+用来指定存储整数的列的数据类型（数字型），不能存储小数。
+
+- CHAR 型
+
+用来存储定长字符串，当列中存储的字符串长度达不到最大长度的时候，使用半角空格进行补足，由于会浪费存储空间，所以一般不使用。
+
+- VARCHAR 型
+
+用来存储可变长度字符串，定长字符串在字符数未达到最大长度时会用半角空格补足，但可变长字符串不同，即使字符数未达到最大长度，也不会用半角空格补足。
+
+- DATE 型
+
+用来指定存储日期（年月日）的列的数据类型（日期型）。
+
+## 约束
+
+- not null , 非空约束，即该列必须输入数据。
+- primary key 主键约束，代表该列是唯一值，可以通过该列取出特定的行的数据。
+
+## 增删查改
+
+- 删除表（删除操作不可逆，删库意味跑路.jpg）
+
+  ```cpp
+  drop table <表名>
+  ```
+
+- 增加一列
+
+  ```cpp
+  alter table <表名> add <列名> <列的定义(比如类型和约束)>;
+  ```
+
+- 删除一列
+
+  ```cpp
+  alter table <表名> drop column <列名>;
+  ```
+
+- 删除一行
+
+  ```cpp
+  delete drom <表名> where column_name = 'XXX';
+  ```
+
+* 清空表内容(优点，速度快)
+
+  ```cpp
+  truncate table table_name
+  ```
+
+* 数据更新
+
+  ```cpp
+  update <表名>
+     set <列名> = <表达式> [, <列名2>=<表达式2>]...  
+   where <条件>  -- 可选，非常重要
+   order by 子句  --可选
+   limit 子句; --可选
+  ```
+
+* 数据插入
+
+  ```cpp
+  insert into <表名> (列1, 列2, 列3, ……) values (值1, 值2, 值3, ……); 
+  ```
+
+## 索引
+
+索引就类似于二叉搜索树，通过将索引值放入这个数据结构中来提高查询速度
+
+- 创建索引
+
+  ```cpp
+  1. create index <索引名> on <表名> (列名)
+  2. alter table <表名> add index <索引名>(列名)
+  ```
+
+  同样也可以在创建表时创建索引
+
+### 索引分类
+
+  
+
+- 主键索引
+
+建立在主键上的索引被称为主键索引，一张数据表只能有一个主键索引，索引列值不允许有空值，通常在创建表时一起创建。
+
+- 唯一索引
+
+建立在UNIQUE字段上的索引被称为唯一索引，一张表可以有多个唯一索引，索引列值允许为空，列值中出现多个空值不会发生重复冲突。
+
+- 普通索引
+
+建立在普通字段上的索引被称为普通索引。
+
+- 前缀索引
+
+前缀索引是指对字符类型字段的前几个字符或对二进制类型字段的前几个bytes建立的索引，而不是在整个字段上建索引。前缀索引可以建立在类型为char、varchar、binary、varbinary的列上，可以大大减少索引占用的存储空间，也能提升索引的查询效率。
+
+- 全文索引
+
+利用“分词技术”实现在长文本中搜索关键字的一种索引。
+
+## 练习题
+
+#### 1.1
+
+编写一条 CREATE TABLE 语句，用来创建一个包含表 1-A 中所列各项的表 Addressbook （地址簿），并为 regist_no （注册编号）列设置主键约束
+
+表1-A　表 Addressbook （地址簿）中的列
+
+![图片](https://github.com/datawhalechina/wonderful-sql/raw/main/img/ch01/ch01.04%E4%B9%A0%E9%A2%981.png)
+
+```cpp
+create table Addressbook(
+	regist_no int not null primary key,
+	name varchar(128) not null,
+	address varchar(256) not null,
+	tel_no char(10),
+	mail_address char(20)
+);
+```
+
+结果：
+
+![image-20220516224824847](C:\Users\86187\AppData\Roaming\Typora\typora-user-images\image-20220516224824847.png)
+
+### 1.2
+
+假设在创建练习1.1中的 Addressbook 表时忘记添加如下一列 postal_code （邮政编码）了，请编写 SQL 把此列添加到 Addressbook 表中。
+
+列名 ： postal_code
+
+数据类型 ：定长字符串类型（长度为 8）
+
+约束 ：不能为 NULL
+
+```cpp
+alter table Addressbook add postal_code char(8) not null;
+```
+
+结果：
+
+![image-20220516225544857](C:\Users\86187\AppData\Roaming\Typora\typora-user-images\image-20220516225544857.png)
+
+### 1.3 填空题
+
+请补充如下 SQL 语句来删除 Addressbook 表。
+
+```
+(    ) table Addressbook;
+```
+
+答案：drop
+
+### 1.4 判断题
+
+是否可以编写 SQL 语句来恢复删除掉的 Addressbook 表？
+
+不可以，删除不可逆，除非有备份，然后人工还原
+
